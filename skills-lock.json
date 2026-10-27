@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "generar-backlog": {
+      "source": "adminoryslabs/Armory",
+      "sourceType": "github",
+      "skillPath": "skills/generar-backlog/SKILL.md",
+      "computedHash": "61636b8a17478c8e5e4697d1b67e17c0778521fb32b511b1a8ccddc84260a82f"
+    },
+    "generar-prd-conversacional": {
+      "source": "adminoryslabs/Armory",
+      "sourceType": "github",
+      "skillPath": "skills/generar-prd-conversacional/SKILL.md",
+      "computedHash": "ce805471d4e69d1048d68f61b71d74e241808677ee1206f90ebb01d06fd69fe0"
+    },
+    "generar-tech-design": {
+      "source": "adminoryslabs/Armory",
+      "sourceType": "github",
+      "skillPath": "skills/generar-tech-design/SKILL.md",
+      "computedHash": "d104ed15212ba3e8cf26795900b459f7ca2cb507757f99995b3a99bcc4538283"
+    },
+    "revision-adversarial": {
+      "source": "adminoryslabs/Armory",
+      "sourceType": "github",
+      "skillPath": "skills/revision-adversarial/SKILL.md",
+      "computedHash": "8e00c53aae94c9803443b6d5343e013a7228edd4a67bca2e62e4ce947d3bd500"
+    }
+  }
+}

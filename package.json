@@ -1,0 +1,47 @@
+{
+  "name": "la-faz",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
+    "db:seed-responsable": "tsx --env-file-if-exists=.env.local scripts/seed-responsable.ts",
+    "db:test:migrate": "tsx --env-file-if-exists=.env.local --env-file-if-exists=.env.test scripts/migrate-test.ts",
+    "db:test": "npm run db:test:migrate && tsx --env-file-if-exists=.env.local --env-file-if-exists=.env.test --test --test-concurrency=1 tests/*.test.ts",
+    "db:rol-publico": "tsx --env-file-if-exists=.env.local --env-file-if-exists=.env.test scripts/crear-rol-publico.ts",
+    "db:check": "tsx --env-file-if-exists=.env.local scripts/db-check.ts"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "bcryptjs": "3.0.3",
+    "drizzle-orm": "^0.45.4",
+    "next": "16.4.3",
+    "next-auth": "5.0.0-beta.32",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "ws": "^8.22.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/ws": "^8.18.2",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.3",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
