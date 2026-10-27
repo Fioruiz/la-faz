@@ -40,7 +40,7 @@ La ONG no tiene un canal oficial de donaciones ni un control centralizado. Los d
 
 ## 3. Comandos del entorno
 
-No existe todavía `package.json` en esta carpeta, así que estos comandos son los previstos para Next.js. Hay que confirmarlos o ajustarlos cuando se cree el proyecto. <!-- REVISAR -->
+Estos comandos son los scripts reales de `package.json` (confirmados con el andamiaje, #1).
 
 ```bash
 # Ubicación del proyecto

@@ -18,7 +18,7 @@
 
 - [x] 3.1 Escribir `tests/sitio-publico-estructura.test.ts`: sin importar base, esquema, Drizzle, Auth.js ni lecturas privadas; sin SDK de pago en `package.json` ni en el código; "Cómo donar" sin `form`, `input` ni `button`; aviso antes de los medios y etiqueta en cada medio; datos de cuenta de relleno; contenido clave presente (titular, cinco hitos en orden, voluntarios, RUC, razón social completa); menú sin enlaces rotos y sin "Proyectos"; `metadata` distinta por página; sin "recibo" ni "deducible"; verificar que pasa
 - [x] 3.2 Comprobar que la prueba falla con mutaciones temporales (añadir `"stripe"` a un `package.json` de prueba, un `<form` en "Cómo donar", un número de cuenta con dígitos reales, un enlace a una ruta inexistente) y revertirlas; verificar que cada una la hace fallar
-- [ ] 3.3 Comprobar que `tests/proxy.test.ts` y las pruebas de acceso siguen pasando sin cambios (las rutas públicas no se protegen y `/` abre sin sesión); verificar con `npm run db:test`
+- [x] 3.3 Comprobar que `tests/proxy.test.ts` y las pruebas de acceso siguen pasando sin cambios (las rutas públicas no se protegen y `/` abre sin sesión); verificar con `npm run db:test`
 
 ## 4. Verificación manual
 
@@ -27,8 +27,8 @@
 ## 5. Documentación e integración
 
 - [x] 5.1 Añadir a `CLAUDE.md` una nota del sitio público: grupo `app/(publico)/`, contenido en `lib/sitio-contenido.ts`, páginas estáticas sin base (la de proyectos de #12 será dinámica), "Cómo donar" con datos ficticios y sin cobro, ubicación Ventanilla (Callao), Chepén e Ica (confirmada por el usuario), datos legales transcritos del usuario; verificar que coincide con el código
-- [ ] 5.2 Ejecutar `npm run build`, `npm run lint`, `npx tsc --noEmit` y `npm run db:test`; verificar código de salida 0 y que cada requisito de `public-site` y `donation-info` tiene al menos una prueba o una verificación manual anotada
-- [ ] 5.3 Ejecutar `openspec validate sitio-publico-estatico --strict`; verificar que no reporta errores
+- [x] 5.2 Ejecutar `npm run build`, `npm run lint`, `npx tsc --noEmit` y `npm run db:test`; verificar código de salida 0 y que cada requisito de `public-site` y `donation-info` tiene al menos una prueba o una verificación manual anotada
+- [x] 5.3 Ejecutar `openspec validate sitio-publico-estatico --strict`; verificar que no reporta errores
 
 ## Workflow follow-up
 

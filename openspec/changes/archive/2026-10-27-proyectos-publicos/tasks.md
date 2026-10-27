@@ -28,8 +28,8 @@
 ## 5. Documentación e integración
 
 - [x] 5.1 Añadir a `CLAUDE.md` una nota de proyectos públicos: `/nuestros-proyectos`, `lib/public-queries*.ts` como única lectura pública, tipo de salida cerrado, tope solo al presentar, sin dinero ni donantes, error de base sin avance, descripción y resultado públicos; verificar que coincide con el código
-- [ ] 5.2 Ejecutar `npm run build`, `npm run lint`, `npx tsc --noEmit` y `npm run db:test`; verificar código de salida 0 y que cada requisito de `public-projects` y `public-data-boundary` tiene al menos una prueba o una verificación manual anotada
-- [ ] 5.3 Ejecutar `openspec validate proyectos-publicos --strict`; verificar que no reporta errores
+- [x] 5.2 Ejecutar `npm run build`, `npm run lint`, `npx tsc --noEmit` y `npm run db:test`; verificar código de salida 0 y que cada requisito de `public-projects` y `public-data-boundary` tiene al menos una prueba o una verificación manual anotada
+- [x] 5.3 Ejecutar `openspec validate proyectos-publicos --strict`; verificar que no reporta errores
 
 ## Workflow follow-up
 
