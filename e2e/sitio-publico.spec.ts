@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { vaciarContadoresDelFormulario } from "./soporte-db";
 
 // Solo lecturas: no envían formularios ni crean datos.
 test("el inicio y las páginas públicas cargan", async ({ page }) => {
@@ -23,11 +24,18 @@ test("el formulario de voluntariado tiene sus campos y el campo trampa no se ve"
   expect(caja === null || caja.x + caja.width < 0).toBe(true);
 });
 
+test.describe("envío del formulario", () => {
+  test.beforeEach(vaciarContadoresDelFormulario);
+  test.afterEach(vaciarContadoresDelFormulario);
+
 test("enviar el formulario vacío muestra los errores sin guardar nada", async ({ page }) => {
   await page.goto("/voluntariado");
+  await page.waitForLoadState("networkidle"); // el formulario es un componente cliente: esperar a que se hidrate
   await page.getByRole("button", { name: "Inscribirme" }).click();
-  await expect(page.getByText("Escribe tu nombre")).toBeVisible();
+  // La primera llamada a la acción compila en modo desarrollo: más margen que los 5 s por defecto.
+  await expect(page.getByText("Escribe tu nombre")).toBeVisible({ timeout: 30_000 });
   await expect(page.getByText("Debes aceptar el uso de tus datos")).toBeVisible();
+});
 });
 
 test("la zona privada pide iniciar sesión", async ({ page }) => {
