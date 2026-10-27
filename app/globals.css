@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Zona pública. Una propuesta de color: la ONG no entregó paleta; se cambia solo aquí. */
+  --marca: #9a3412;
+  --marca-texto: #ffffff;
+  --marca-suave: #fff4ec;
+  --publico-fondo: #fffaf6;
+  --publico-tarjeta: #ffffff;
+  --publico-borde: #ead9cc;
+  --publico-apagado: #57493f;
+}
+
+@theme inline {
+  --color-marca: var(--marca);
+  --color-marca-texto: var(--marca-texto);
+  --color-marca-suave: var(--marca-suave);
+  --color-publico-fondo: var(--publico-fondo);
+  --color-publico-tarjeta: var(--publico-tarjeta);
+  --color-publico-borde: var(--publico-borde);
+  --color-publico-apagado: var(--publico-apagado);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    --marca: #fdba74;
+    --marca-texto: #1c1008;
+    --marca-suave: #2a1a10;
+    --publico-fondo: #140f0c;
+    --publico-tarjeta: #1d1612;
+    --publico-borde: #3b2c22;
+    --publico-apagado: #d3c3b6;
+  }
+}
+
+/* Foco visible en todo elemento interactivo de la zona pública. */
+.publico a:focus-visible,
+.publico button:focus-visible {
+  outline: 3px solid var(--marca);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}

@@ -1,0 +1,1 @@
+ALTER TABLE "voluntarios_inscritos" ADD COLUMN "consentimiento_version" text NOT NULL;

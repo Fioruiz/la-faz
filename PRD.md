@@ -1,110 +1,90 @@
 ---
-title: "ONG La Faz"
+title: "Sistema de donaciones y control de proyectos – ONG La FAZ"
 ---
 
-# PRD: ONG La Faz
+# PRD: Sistema de donaciones y control de proyectos – ONG La FAZ
 
 ## Problema
 
-La Faz es una asociación sin fines de lucro que acompaña a personas, familias y comunidades en situación de vulnerabilidad, promoviendo sus derechos, fortaleciendo sus capacidades y construyendo redes de solidaridad.
+La ONG La FAZ no tiene un canal oficial para recibir donaciones ni un control centralizado de lo que recibe. Los donantes depositan en cuentas personales de responsables y el registro vive en un cuaderno o en un WhatsApp personal. Esto ocurre en cada proyecto de la ONG (los 10 Derechos en noviembre, apoyo alimentario, música, Casa del Buen Samaritano).
 
-Hoy recibe donaciones solo por transferencia y WhatsApp, y su única presencia en línea es una página de Facebook. Sin un sitio propio, la ONG se ve menos creíble y llega a menos gente: quien quiere donar, dentro o fuera del país, no tiene un lugar donde conocer lo que hace y donar. Internamente tampoco tiene un sistema para registrar donaciones y voluntarios ni para sacar reportes de sus proyectos, que son anuales y mensuales.
+Las donaciones llegan en dinero (transferencia, Yape, Plin; el efectivo casi no se usa) y en especie (agua, cereal, fruta, etc.), con metas concretas: por ejemplo, 2000 niños requieren 2000 packs. Hoy nadie sabe con certeza cuánto se recaudó ni cuánto falta; el registro puede olvidarse o perderse. La captación de voluntarios (colegios, pasacalle, carro alegórico) tampoco tiene un lugar donde ordenarse.
 
-<!-- REVISAR: asumo que hoy el registro de donaciones y voluntarios es manual (Excel, cuadernos o ninguno); no lo confirmaste -->
+Además, al no existir una web oficial, la ONG no inspira confianza a donantes potenciales, en especial a los del extranjero, y recibe pocas donaciones por ese lado.
+
+Se plantea como **dolor concreto**: pérdida de visibilidad y control de lo recaudado, que impide saber cuánto falta para cada meta.
 
 ## Usuario objetivo
 
-- **Donante / visitante:** persona, dentro o fuera del país, que llega a la web, conoce lo que hace La Faz, elige un proyecto y hace una donación única. <!-- REVISAR: no definiste si es conocido de la ONG, desconocido que llega por redes o empresa; asumo que es principalmente persona natural -->
-- **Voluntario:** se inscribe por la web. El administrador también puede registrarlo desde el panel. No tiene login.
-- **Administrador (acceso total):** un único usuario que gestiona proyectos, testimonios, aliados, voluntarios, donaciones y reportes.
-- **Usuario de solo lectura:** inicia sesión únicamente para ver reportes de voluntarios y donaciones. <!-- REVISAR: asumo que puede haber varios -->
+- **Responsable de la ONG** (perfil principal): unas 3 personas que hoy llevan las donaciones en cuaderno o WhatsApp. Usan computadora. Necesitan registrar donaciones, ver el avance de cada meta y llevar el registro de quienes apoyan.
+- **Donante**: familiares, amigos y seguidores en redes, en Perú y en el extranjero. En Perú usa Yape, Plin y transferencia, y también dona productos. Necesita saber cómo donar y confiar en que la ONG es seria.
+- **Voluntario**: persona que quiere ayudar en actividades (colegios, pasacalle). Solo se apunta mediante un formulario; no tiene cuenta.
 
 ## Objetivo / resultado esperado
 
-Que La Faz **capte donantes y voluntarios** a través de la web para poder financiar y realizar más proyectos. Las donaciones se asignan por proyecto, y hay proyectos mensuales y anuales.
+La ONG sabe en cada momento cuánto ha recibido, en dinero y en productos, y cuánto falta para la meta de cada proyecto, sin depender de cuadernos ni de WhatsApp. Los donantes, también los extranjeros, ven un canal oficial donde consultan públicamente el avance de las metas (por ejemplo, "1200 de 2000 packs").
 
-La señal de que funciona es la **cantidad de donaciones recibidas por mes**, y se espera ver cambios en los **primeros 3 meses** desde que exista la pasarela real.
-
-<!-- REVISAR: no hay cifra objetivo; la línea base es de 3 donaciones al mes -->
-<!-- REVISAR: capturar voluntarios es un objetivo, pero no definiste cómo se mide (no hay meta de inscripciones) -->
+Prioridad: primero el control interno (registrar y ver avance); la web pública es el canal que muestra esos mismos datos. Es una sola aplicación y una sola base de datos, con una zona pública y una zona privada.
 
 ## Alcance (qué sí incluye esta versión)
 
-**Web pública**
+**Zona pública**
+- Presentación de la ONG.
+- Lista de proyectos. 10 Derechos y apoyo alimentario con meta y barra de avance; Música y Casa del Buen Samaritano solo informativos.
+- Sección "Cómo donar": Yape, Plin y transferencia (datos de cuenta). Para el extranjero, datos de transferencia internacional <!-- REVISAR: se asumió que no hay pago con tarjeta; en esta versión la cuenta es una simulación (demo) -->.
+- Formulario de voluntariado.
 
-- Header con logo y nombre de La Faz, menú (Quiénes somos · Proyectos · Testimonios · Voluntarios · Aliados · Donar) y botón CTA "Donar ahora".
-- Footer con información de contacto.
-- Secciones: Quiénes somos, Proyectos, Testimonios, Voluntarios (inscripción), Aliados y Donar.
-- Proyectos en cards pequeñas; al hacer clic se muestra información detallada.
-- Sitio en **español e inglés**. El administrador carga el contenido en ambos idiomas.
-- Flujo de donación **simulado y completo**: el donante elige un proyecto, deja sus datos y pulsa Donar, ve el mensaje de "donación exitosa", y el registro se guarda con estado `simulada`.
-- Inscripción de voluntarios, validada por número de documento único.
-
-**Panel admin**
-
-- Login con dos roles: administrador (acceso total) y solo lectura (solo ve reportes).
-- Recuperación de contraseña por correo.
-- Gestión (crear, editar y desactivar) de proyectos, testimonios y aliados, y alta manual de voluntarios.
-- Reportes exportables: donaciones por proyecto con filtro de fecha, y lista de voluntarios.
-- Envío de correos automáticos en tres casos: recuperación de contraseña, confirmación de inscripción al voluntario y confirmación de donación al donante.
-
-**Dependencias externas:** pasarela de pago, en espera; se define al final, después de cerrar el trabajo de la web.
+**Zona privada** (login para ~3 responsables)
+- Crear y editar proyectos con metas por ítem (por ejemplo, 2000 packs; 2000 botellas de agua; etc.).
+- Costo referencial opcional por ítem (por ejemplo, 24 botellas = S/ 13) para estimar cuánto falta en soles.
+- Registrar donaciones en dinero o en producto: donante, proyecto, medio, fecha y monto o cantidad. <!-- REVISAR: se asumió que solo el responsable registra la donación; el donante no se autorregistra -->
+- Ver el avance de cada meta y de cada proyecto.
+- Reporte en pantalla de las donaciones registradas por cada responsable y por proyecto.
+- Registro de apoyantes (donantes y voluntarios) y lista de voluntarios inscritos.
+- Historial de cambios en los registros (quién y cuándo).
 
 ## No alcance (qué explícitamente no incluye esta versión)
 
-- No incluye pasarela de pago real: la donación es simulada.
-- No incluye donaciones recurrentes ni cuentas de donante con historial.
-- No incluye gestión de proyectos más allá de crear, editar y desactivar (sin metas de recaudación ni seguimiento de avance).
-- No incluye login con Google ni con redes sociales.
-- No incluye galería de fotos, ni blog ni noticias.
+- Pago con tarjeta o pasarela de pagos en línea.
+- Inventario completo con compras y precios (solo existe el costo referencial opcional).
+- Exportar reportes a Excel o PDF.
+- Aplicación móvil (solo web).
+- Cuentas de usuario para donantes o voluntarios (no inician sesión).
+- Logística de las actividades (pasacalle, carro alegórico, asignación de voluntarios).
+- Recibos de donación con validez tributaria.
+- Seguimiento de promesas de donación (solo cuenta lo ya recibido).
 
 ## Criterios de éxito
 
-**Funcionales (v1)**
-
-- Un donante completa el flujo de donación simulada de punta a punta (elegir proyecto, datos, Donar, mensaje de éxito) y la donación aparece en el panel con estado `simulada`.
-- El administrador puede, sin ayuda, administrar proyectos, testimonios y aliados (crear y editar) y sacar reportes exportables de donaciones por proyecto con filtro de fecha y de voluntarios.
-- Un voluntario puede inscribirse por la web, y el administrador puede darlo de alta desde el panel. Un documento ya registrado se rechaza.
-- Un usuario de solo lectura puede ver los reportes y no puede modificar nada.
-- El sitio se puede cambiar entre español e inglés y muestra el contenido cargado en cada idioma.
-
-**De negocio (solo medibles cuando exista la pasarela real)**
-
-- **Línea base:** 3 donaciones al mes (transferencia y WhatsApp).
-- **Resultado esperado:** mejora visible en las donaciones mensuales dentro de los primeros 3 meses con pasarela activa.
-- **Meta numérica:** no se define; no es prioritaria para La Faz. La comparación se hace contra la línea base de 3 donaciones al mes. <!-- REVISAR: sin meta, "mejora visible" es subjetivo -->
-- **Voluntarios:** sin meta por ahora.
-
-**Anti-métrica:** no se evalúa el éxito con las donaciones simuladas, porque no representan dinero real. <!-- REVISAR: lo añadí yo por la consecuencia de la donación simulada -->
-
-<!-- REVISAR: no hay tiempo máximo para completar una donación ni para sacar un reporte; solo el criterio "sin ayuda" -->
+- Un responsable registra una donación en menos de 2 minutos.
+- Un responsable ve cuánto falta de la meta de un proyecto en menos de 30 segundos.
+- El 100% de las donaciones de los proyectos 10 Derechos y apoyo alimentario están en el sistema, ninguna solo en cuaderno o WhatsApp.
+- La barra de avance pública coincide exactamente con lo registrado en la zona privada.
+- Al menos 1 donación recibida por la web en el primer mes. <!-- REVISAR: criterio suave de captación, propuesto por el agente; el usuario indicó que la captación no es prioridad -->
 
 ## Casos borde a contemplar
 
-- **Montos:** todo valor de dinero se valida: no puede ser vacío, cero, negativo, con letras ni con formato inválido.
-- **Proyectos:** un proyecto se **desactiva y nunca se elimina**, para conservar el historial de donaciones y de reportes.
-- **Permisos:** el usuario de solo lectura no puede acceder a pantallas de edición, ni por URL. Quien no tenga sesión no entra al panel. <!-- REVISAR: no me indicaste este caso; es el que asumo por la regla de los dos roles -->
-- **Voluntarios:** el **número de documento** es único. Si alguien ya está inscrito, se rechaza el duplicado con un mensaje claro, tanto desde la web como desde el panel.
-- **Edición simultánea:** descartada, porque solo hay un administrador con acceso total.
-- **Donación abandonada:** si el donante cierra la página antes de pulsar Donar, no se registra nada. <!-- REVISAR: lo asumí yo -->
-- **Contenido bilingüe:** si falta la descripción en inglés, se muestra la de español.
+<!-- REVISAR: las soluciones de esta sección fueron propuestas por el agente a pedido del usuario -->
+
+- **Donación sin proyecto**: se guarda como "Sin asignar" y un responsable la asigna después; no cuenta en ninguna barra hasta entonces.
+- **Se pasa de la meta**: la barra pública muestra 100%; la zona privada muestra el excedente real. No se rechaza nada.
+- **Error en un registro**: se puede editar y cada cambio guarda quién y cuándo; nada se borra definitivamente, solo se anula.
+- **Donante anónimo**: se muestra como "Anónimo"; el nombre real puede quedar solo en la zona privada.
+- **Donación mixta** (dinero y productos): se registra como dos donaciones vinculadas a la misma persona.
+- **Registro duplicado**: el sistema avisa si ya existe una donación igual (mismo donante, monto, fecha y proyecto) antes de guardar.
+- **Un responsable deja la ONG**: se desactiva su acceso sin borrar sus registros.
+- **Proyecto terminado**: queda visible como "Finalizado" con su resultado y ya no recibe donaciones nuevas.
 
 ## Supuestos y riesgos abiertos
 
 **Supuestos**
-
-- El proyecto se levanta primero **en local**. La pasarela de pago y el alojamiento se definen después. <!-- REVISAR: no hay fecha ni proveedor definido para ninguno de los dos -->
-- Los donantes llegan a la web desde Facebook, WhatsApp y recomendaciones, y la web les da suficiente credibilidad para donar. <!-- REVISAR: no lo validaste con donantes reales -->
-- Un solo administrador total puede gestionar todo el contenido y las donaciones, sin carga excesiva.
-- Quien administre puede redactar el contenido en español e inglés, o cuenta con alguien que lo traduzca. <!-- REVISAR -->
-- La Faz puede recibir donaciones del exterior sin problema.
-- El volumen de correos será bajo, por lo que el costo de un servicio de envío no debería ser significativo. <!-- REVISAR: no está validado; depende del proveedor y de qué correos se envíen -->
+- Los 3 responsables tienen computadora e internet estable.
+- Una web oficial aumenta la confianza de donantes extranjeros, aunque solo muestre datos de transferencia. <!-- REVISAR: no verificado -->
+- El proyecto es de prueba: la cuenta bancaria y la recepción de pagos internacionales se resuelven como demo/simulación.
+- Las metas por ítem (por ejemplo, 2000 packs) se pueden definir antes de iniciar cada campaña.
 
 **Riesgos**
-
-- **Donación simulada visible al público:** si el sitio se publica antes de integrar la pasarela, un donante podría creer que donó y no se cobró nada. Mitigación: no publicar así, o mostrar un aviso de modo demo.
-- **Pasarela de pago:** la preocupación principal del dueño del proyecto. Se decidió no bloquear el avance por ella: primero se cierra el trabajo de la web y al final se evalúan proveedores. Su integración puede cambiar el flujo de donación y depende de un proveedor externo y de requisitos de la ONG. <!-- REVISAR: no sé qué proveedor ni qué documentos exigirá -->
-- **Correo automático:** la recuperación de contraseña y las confirmaciones de voluntarios y donaciones necesitan un servicio de envío. En local no llegarán correos reales hasta configurarlo, y tiene un costo posible.
-- **Administrador único:** si pierde el acceso a su correo, también pierde la recuperación de clave. Falta decidir quién respalda ese acceso.
-- **Contenido bilingüe:** se duplica el trabajo de carga del administrador.
-- **Línea base baja** (3 donaciones al mes): las mejoras serán difíciles de leer estadísticamente, y sin meta numérica no se puede declarar éxito de forma objetiva.
+- **Adopción**: si los responsables siguen anotando en cuaderno o WhatsApp, el sistema queda desactualizado y la barra pública pierde sentido.
+- **Datos personales**: se guardan datos de donantes y voluntarios; hay que proteger el acceso y considerar la ley de protección de datos personales del Perú. <!-- REVISAR: agente no verificó requisitos legales específicos -->
+- **Plazo**: se necesita funcionando de inmediato, con el proyecto de los 10 Derechos en noviembre; el tiempo es muy corto y obliga a priorizar el control interno.
+- **Mantenimiento**: no está definido quién mantiene la web y la base de datos después del curso. <!-- REVISAR -->
