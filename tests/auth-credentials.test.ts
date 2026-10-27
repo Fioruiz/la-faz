@@ -153,6 +153,19 @@ describe("lib/auth.ts usa autenticarResponsable (cubre la llamada directa a /api
   });
 });
 
+describe("los intentos rechazados no prolongan el bloqueo (ADR 0011)", () => {
+  test("tras bloquearse, insistir no agrega intentos: la tabla conserva solo los 5 aceptados", () =>
+    enTransaccion(async (tx) => {
+      const r = await responsableConPassword(tx);
+      for (let i = 0; i < 5; i++) assert.equal(await autenticarResponsable(tx, { correo: r.correo, password: "incorrecta-123" }), null);
+      for (let i = 0; i < 4; i++) {
+        await assert.rejects(() => autenticarResponsable(tx, { correo: r.correo, password: PASSWORD }), LoginBloqueadoError);
+      }
+      const filas = await tx.execute(sql`select count(*)::int as n from intentos_limitados where clave = ${claveHmac(r.correo)}`);
+      assert.equal(filas.rows[0].n, 5);
+    }));
+});
+
 describe("límite de login con peticiones en paralelo (ADR 0011)", () => {
   // Conexión real y filas confirmadas: la carrera solo existe entre conexiones distintas.
   test("20 intentos simultáneos con contraseñas distintas: como mucho 5 llegan a comprobar la contraseña", async () => {

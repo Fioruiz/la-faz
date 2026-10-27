@@ -10,7 +10,10 @@ import { crearLecturasPublicas } from "../lib/public-queries-core";
 import {
   COLUMNAS_DONACIONES,
   COLUMNAS_DONACIONES_DENEGADAS,
+  LIMITE_CONEXIONES,
   ROL_PUBLICO,
+  TIEMPO_MAXIMO_CONSULTA,
+  comprobarRolPublico,
   TABLAS_DENEGADAS,
   TABLAS_PUBLICAS,
   sentenciasPermisos,
@@ -82,6 +85,14 @@ describe("permisos declarados del rol público", () => {
     assert.deepEqual(COLUMNAS_DONACIONES.filter((c) => (COLUMNAS_DONACIONES_DENEGADAS as readonly string[]).includes(c)), []);
   });
 
+  test("las sentencias fijan el límite de conexiones y el tiempo máximo por consulta", () => {
+    const todas = sentenciasPermisos().join("\n");
+    assert.match(todas, new RegExp(`alter role ${ROL_PUBLICO} connection limit ${LIMITE_CONEXIONES}\\b`));
+    assert.match(todas, new RegExp(`alter role ${ROL_PUBLICO} set statement_timeout = '${TIEMPO_MAXIMO_CONSULTA}'`));
+    assert.equal(TIEMPO_MAXIMO_CONSULTA, "5s");
+    assert.equal(LIMITE_CONEXIONES, 20);
+  });
+
   test("las sentencias solo conceden SELECT y nunca permisos de escritura", () => {
     const todas = sentenciasPermisos().join("\n");
     assert.doesNotMatch(todas, /grant\s+(insert|update|delete|all|create|truncate)/i);
@@ -90,6 +101,21 @@ describe("permisos declarados del rol público", () => {
 });
 
 describe("rol de solo lectura de la zona pública", () => {
+  test("comprobarRolPublico acepta la conexión del rol y rechaza la de plena autoridad", async () => {
+    await comprobarRolPublico(dbPublico);
+    await assert.rejects(() => comprobarRolPublico(db), /no es el rol publico_lectura/);
+  });
+
+  test("tiene límite de conexiones y tiempo máximo por consulta", async () => {
+    const { rows } = await poolPublico.query("select rolconnlimit, rolconfig from pg_roles where rolname = current_user");
+    assert.equal(rows[0].rolconnlimit, LIMITE_CONEXIONES);
+    assert.ok((rows[0].rolconfig as string[]).includes(`statement_timeout=${TIEMPO_MAXIMO_CONSULTA}`));
+  });
+
+  test("una consulta que pasa del tiempo máximo se cancela (57014)", async () => {
+    assert.equal(await rechazo("select pg_sleep(8)"), "57014");
+  });
+
   test("conecta como el rol público", async () => {
     assert.equal((await poolPublico.query("select current_user as u")).rows[0].u, ROL_PUBLICO);
   });

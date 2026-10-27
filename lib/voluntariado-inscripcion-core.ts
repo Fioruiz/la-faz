@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { MENSAJE_ERROR_GENERICO, type DbTransaccional, type ResultadoAccion } from "./escritura-auditada-core";
-import { registrarIntento, superaLimite, type DbLimite } from "./limite-intentos";
+import { intentar, type DbLimite } from "./limite-intentos";
 import { apoyantes, voluntariosInscritos } from "./schema";
 import { CAMPO_TRAMPA_NOMBRE, CONSENTIMIENTO_VOLUNTARIADO } from "./sitio-contenido";
 import { inscripcionVoluntarioEsquema } from "./voluntariado-esquemas";
@@ -60,8 +60,7 @@ export async function inscribirVoluntario(
   // Primero el límite: cuenta TODO envío (también el de bots y el que falla la validación). Si el contador falla,
   // no se guarda nada sin contarlo.
   try {
-    await registrarIntento(db, "formulario", opciones.claveIp, opciones.ahora);
-    if (await superaLimite(db, "formulario", opciones.claveIp, opciones.ahora)) {
+    if (await intentar(db, "formulario", opciones.claveIp, opciones.ahora)) {
       return { ok: false, tipo: "limite", mensaje: MENSAJE_LIMITE, valores: valoresEscritos(datosCrudos) };
     }
   } catch (e) {

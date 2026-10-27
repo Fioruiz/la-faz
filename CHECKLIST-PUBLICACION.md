@@ -34,7 +34,7 @@ la aplicación se publica antes de las tablas y las conexiones, el formulario y 
    `DATABASE_URL_PUBLICO` (cadena *pooled* del rol `publico_lectura`) y `AUTH_SECRET` (distinto del local).
 10. [ ] Comprobar que `DATABASE_URL_PUBLICO` es de verdad el rol de solo lectura: conectar con esa cadena y ejecutar
     `select current_user` (debe decir `publico_lectura`) y `select count(*) from apoyantes` (debe fallar con "permission denied").
-    Si en Vercel se pone la cadena del propietario, todo funciona pero el aislamiento queda anulado sin avisar.
+    La aplicación ya lo comprueba sola en cada arranque (si la cadena fuera del propietario, las páginas públicas fallan con el error visible), así que este paso es una segunda barrera.
 11. [ ] Desplegar y probar en la URL pública: inicio, proyectos (barras), "Cómo donar" con su aviso, enviar el
     formulario de voluntariado, entrar a la zona privada, ver la lista de voluntarios y comprobar que el contacto solo
     sale en el detalle del apoyante.

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, describe, test } from "node:test";
 import { eq } from "drizzle-orm";
-import { LIMITES, claveHmac, claveDeIp, contarIntentos, limpiarIntentos, prefijoIpv6, registrarIntento, superaLimite } from "../lib/limite-intentos";
+import { LIMITES, claveHmac, claveDeIp, contarIntentos, intentar, limpiarIntentos, prefijoIpv6, registrarIntento, superaLimite } from "../lib/limite-intentos";
 import { intentosLimitados } from "../lib/schema";
 import { enTransaccion, pool, rechazo } from "./helpers";
 
@@ -76,6 +76,35 @@ describe("superaLimite (login y formulario)", () => {
       assert.equal(await superaLimite(tx, "login", a, despues(6 * MIN)), false);
       assert.equal((await tx.select().from(intentosLimitados).where(eq(intentosLimitados.clave, a))).length, 0);
       assert.equal((await tx.select().from(intentosLimitados).where(eq(intentosLimitados.clave, b))).length, 1);
+    }));
+});
+
+describe("intentar: el bloqueo no se renueva con intentos rechazados", () => {
+  test("los 5 primeros pasan, del sexto en adelante se rechazan y NO quedan registrados", () =>
+    enTransaccion(async (tx) => {
+      const c = claveHmac(`i-${marca()}`, "s");
+      for (let i = 0; i < 5; i++) assert.equal(await intentar(tx, "login", c, despues(i * 1000)), false);
+      for (let i = 0; i < 7; i++) assert.equal(await intentar(tx, "login", c, despues(10_000 + i * 1000)), true);
+      assert.equal((await tx.select().from(intentosLimitados).where(eq(intentosLimitados.clave, c))).length, 5);
+    }));
+
+  test("quien insiste mientras está bloqueado queda libre 15 minutos después del quinto intento aceptado", () =>
+    enTransaccion(async (tx) => {
+      const c = claveHmac(`j-${marca()}`, "s");
+      for (let i = 0; i < 5; i++) await intentar(tx, "login", c, despues(i * 1000));
+      // El atacante insiste cada pocos minutos durante el bloqueo...
+      for (const min of [3, 6, 9, 12, 14]) assert.equal(await intentar(tx, "login", c, despues(min * MIN)), true);
+      // ...y aun así el bloqueo vence cuando salen de la ventana los 5 intentos aceptados.
+      assert.equal(await intentar(tx, "login", c, despues(15 * MIN + 10_000)), false);
+    }));
+
+  test("el formulario usa la misma regla: el sexto envío de la hora se rechaza y no cuenta", () =>
+    enTransaccion(async (tx) => {
+      const c = claveHmac(`k-${marca()}`, "s");
+      for (let i = 0; i < 5; i++) assert.equal(await intentar(tx, "formulario", c, despues(i * 1000)), false);
+      assert.equal(await intentar(tx, "formulario", c, despues(30 * MIN)), true);
+      assert.equal(await contarIntentos(tx, "formulario", c, despues(30 * MIN)), 5);
+      assert.equal(await intentar(tx, "formulario", c, despues(61 * MIN)), false);
     }));
 });
 

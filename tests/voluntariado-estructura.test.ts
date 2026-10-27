@@ -54,7 +54,7 @@ describe("#13: la inscripción es la única escritura pública", () => {
 
   test("el límite por IP va primero (antes del campo trampa y de validar) y la IP no se guarda en claro", () => {
     const codigo = sinComentarios(leer(lib("voluntariado-inscripcion-core.ts")));
-    const [limite, trampa, validar] = [codigo.indexOf("registrarIntento("), codigo.indexOf("CAMPO_TRAMPA]"), codigo.indexOf("safeParse")];
+    const [limite, trampa, validar] = [codigo.indexOf("intentar(db"), codigo.indexOf("CAMPO_TRAMPA]"), codigo.indexOf("safeParse")];
     assert.ok(limite !== -1 && limite < trampa && trampa < validar);
     assert.doesNotMatch(codigo, /x-forwarded-for|headers\(/i);
     const envoltorio = sinComentarios(leer(lib("voluntariado-inscripcion.ts")));

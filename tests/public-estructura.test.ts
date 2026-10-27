@@ -67,6 +67,18 @@ describe("ADR 0011: la zona pública lee solo con el rol de solo lectura", () =>
     assert.doesNotMatch(codigo, /db-client|getDb\(|getPool|DATABASE_URL\b(?!_)/);
   });
 
+  test("cada lectura pública comprueba antes que la conexión es el rol de solo lectura", () => {
+    const codigo = sinComentarios(leer(MODULOS[1]));
+    assert.match(codigo, /from\s+["']\.\/rol-publico["']/);
+    for (const nombre of ["listarProyectosPublicos", "getProyectoPublico"]) {
+      const cuerpo = codigo.match(new RegExp(`export async function ${nombre}\\([^)]*\\)\\s*\\{[\\s\\S]*?\\n\\}`))?.[0] ?? "";
+      assert.ok(cuerpo.length > 0, `no se encontró ${nombre}`);
+      assert.match(cuerpo, /await asegurarRolPublico\(\)/, nombre);
+      assert.ok(cuerpo.indexOf("asegurarRolPublico") < cuerpo.indexOf("return lecturas."), nombre);
+    }
+    assert.match(codigo, /comprobarRolPublico\(getDbPublico\(\)\)/);
+  });
+
   test("db-publico lee DATABASE_URL_PUBLICO y no cae a la conexión de la aplicación", () => {
     const codigo = sinComentarios(leer(DB_PUBLICO));
     assert.match(codigo, /process\.env\.DATABASE_URL_PUBLICO/);

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import type { getDb } from "./db-client";
-import { claveHmac, limpiarIntentos, registrarIntento, superaLimite, type DbLimite } from "./limite-intentos";
+import { claveHmac, intentar, limpiarIntentos, type DbLimite } from "./limite-intentos";
 import { compararConHashFicticio, verificarPassword } from "./password";
 import { responsables } from "./schema";
 
@@ -27,8 +27,9 @@ export class LoginBloqueadoError extends Error {
 
 // Devuelve el id del responsable o null. No distingue correo inexistente, contraseña
 // incorrecta ni responsable desactivado: el login muestra un solo mensaje.
-// Límite de intentos (ADR 0011). Se REGISTRA el intento primero y se cuenta después: con peticiones en paralelo solo
-// las primeras 5 quedan bajo el tope y llegan a comprobar la contraseña; el resto se rechaza sin tocarla. Un acierto
+// Límite de intentos (ADR 0011). Se REGISTRA el intento primero y se cuenta después (intentar()): con peticiones en
+// paralelo solo las primeras 5 quedan bajo el tope y llegan a comprobar la contraseña; el resto se rechaza sin
+// tocarla y sin que su intento cuente, para que el bloqueo no se pueda renovar sin fin. Un acierto
 // borra los intentos del correo; un fallo (incluidos correo inexistente y responsable desactivado) los deja. Si la base
 // falla, el error se propaga: nunca se da acceso sin contar.
 export async function autenticarResponsable(db: DbLimite, entrada: unknown): Promise<{ id: number } | null> {
@@ -37,8 +38,7 @@ export async function autenticarResponsable(db: DbLimite, entrada: unknown): Pro
   const { correo, password } = parsed.data;
 
   const clave = claveHmac(correo);
-  await registrarIntento(db, "login", clave);
-  if (await superaLimite(db, "login", clave)) throw new LoginBloqueadoError();
+  if (await intentar(db, "login", clave)) throw new LoginBloqueadoError();
 
   const [responsable] = await db
     .select({ id: responsables.id, passwordHash: responsables.passwordHash, activo: responsables.activo })

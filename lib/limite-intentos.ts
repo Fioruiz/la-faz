@@ -58,20 +58,30 @@ export async function contarIntentos(db: DbLimite, tipo: TipoLimite, clave: stri
   return n;
 }
 
-// El intento YA registrado pasó del máximo de la ventana. Se registra primero y se cuenta después (login y
-// formulario): así, aunque lleguen muchas peticiones en paralelo, solo las primeras `maximo` quedan por debajo del tope
-// (cada una ve al menos los intentos confirmados antes que el suyo). Los intentos ya bloqueados también cuentan, de
-// modo que quien insiste sigue bloqueado hasta que sus intentos salgan de la ventana.
+// El intento YA registrado pasó del máximo de la ventana.
 export async function superaLimite(db: DbLimite, tipo: TipoLimite, clave: string, ahora = new Date()): Promise<boolean> {
   return (await contarIntentos(db, tipo, clave, ahora)) > LIMITES[tipo].maximo;
 }
 
-// Registra un intento y, de paso, borra los de más del doble de la ventana (sin tarea programada).
-export async function registrarIntento(db: DbLimite, tipo: TipoLimite, clave: string, ahora = new Date()): Promise<void> {
-  await db.insert(intentosLimitados).values({ tipo, clave, creadoEn: ahora });
+// Registra un intento y, de paso, borra los de más del doble de la ventana (sin tarea programada). Devuelve su id.
+export async function registrarIntento(db: DbLimite, tipo: TipoLimite, clave: string, ahora = new Date()): Promise<number> {
+  const [{ id }] = await db.insert(intentosLimitados).values({ tipo, clave, creadoEn: ahora }).returning({ id: intentosLimitados.id });
   await db
     .delete(intentosLimitados)
     .where(and(eq(intentosLimitados.tipo, tipo), lt(intentosLimitados.creadoEn, desde(ahora, 2 * LIMITES[tipo].ventanaMs))));
+  return id;
+}
+
+// Cuenta un intento nuevo y dice si SUPERA el límite (true = rechazarlo). Se registra primero y se cuenta después:
+// aunque lleguen muchas peticiones en paralelo, solo las primeras `maximo` quedan bajo el tope. Un intento rechazado
+// NO se conserva: si siguiera contando, quien insiste mantendría el bloqueo sin fin (un atacante podría bloquear a
+// un responsable para siempre con un intento cada pocos minutos). Así el bloqueo vence cuando los `maximo` intentos
+// aceptados salen de la ventana.
+export async function intentar(db: DbLimite, tipo: TipoLimite, clave: string, ahora = new Date()): Promise<boolean> {
+  const id = await registrarIntento(db, tipo, clave, ahora);
+  if (!(await superaLimite(db, tipo, clave, ahora))) return false;
+  await db.delete(intentosLimitados).where(eq(intentosLimitados.id, id));
+  return true;
 }
 
 // Tras un acierto de login, los fallos de ese correo dejan de contar.

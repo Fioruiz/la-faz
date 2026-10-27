@@ -25,13 +25,18 @@ filtrar apoyantes o contactos; el login no limita intentos; y el formulario solo
    zona pública falla de forma visible; no cae a `DATABASE_URL`.
 3. **Límite de intentos con contadores en Postgres** (`lib/limite-intentos.ts`, tabla `intentos_limitados`):
    - login: máximo 5 intentos por correo en 15 minutos; el sexto se rechaza sin comprobar la contraseña, y los
-     intentos rechazados también cuentan. Se registra el intento ANTES de comprobar (si se comprobara primero, peticiones
+     intentos rechazados NO se conservan (si contaran, quien insiste mantendría el bloqueo sin fin: se descubrió en la
+     revisión de seguridad); Se registra el intento ANTES de comprobar (si se comprobara primero, peticiones
      en paralelo se saltarían el tope); un acierto borra los intentos del correo;
    - formulario de voluntariado: 5 envíos por hora por IP; una IPv6 cuenta por su prefijo /64.
    La clave es un HMAC con `AUTH_SECRET` del correo o de la IP, nunca el valor en claro. El límite del login está en
    `autenticarResponsable()` (la función que usa Auth.js), para cubrir también las llamadas directas a `/api/auth`.
    Si el contador falla, el acceso y el guardado se rechazan.
-4. **Respaldo por la restauración de Neon**, con un procedimiento escrito y ensayado (`RESPALDO.md`). Sin volcados
+4. **Defensas añadidas tras la revisión de seguridad:** cabeceras HTTP (CSP con `frame-ancestors 'none'`,
+   `X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`; sin `x-powered-by`); la zona pública
+   comprueba en ejecución que su conexión es `publico_lectura` y que no puede leer `apoyantes` (si no, falla de forma
+   visible); y el rol tiene límite de 20 conexiones y `statement_timeout` de 5 s.
+5. **Respaldo por la restauración de Neon**, con un procedimiento escrito y ensayado (`RESPALDO.md`). Sin volcados
    propios.
 
 ## Alternativas consideradas
@@ -58,6 +63,9 @@ filtrar apoyantes o contactos; el login no limita intentos; y el formulario solo
 - Costo: `X-Forwarded-For` solo es fiable donde lo fija la plataforma (Vercel); varios voluntarios tras una misma
   IP (un colegio) comparten el límite.
 - Costo: una consulta y una escritura extra por intento de login y por envío del formulario.
-- Costo: `DATABASE_URL_PUBLICO` mal puesta con la cadena del propietario no da error y anula el aislamiento; el
-  paso se verifica en `CHECKLIST-PUBLICACION.md`.
+- `DATABASE_URL_PUBLICO` mal puesta con la cadena del propietario ya no pasa en silencio: la comprobación en
+  ejecución la rechaza. Sigue en la lista de verificación como segunda barrera.
+- Costo: la CSP conserva `'unsafe-inline'` en scripts y estilos (Next hidrata con scripts en línea y no usamos nonces).
+- Costo: cerrar sesión no invalida el token (JWT de 7 días); la revocación real es desactivar al responsable (ADR 0009).
+- Abierto: no hay límite por IP en el login ni en las páginas públicas (se puede añadir el WAF de Vercel).
 - La restauración depende de la ventana de recuperación del plan de Neon y de un solo proveedor.
