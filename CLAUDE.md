@@ -53,6 +53,7 @@ npm run start      # servir el build de producción en local
 
 # Base de datos (Drizzle + Neon)
 npm run db:check         # prueba la conexión (select 1 y transacciones)
+npm run e2e             # pruebas E2E con Playwright (e2e/): arrancan la app en :3200 contra la rama de PRUEBAS de Neon (scripts/e2e-servidor.ts se niega si apunta a la real); solo lecturas y validación, sin crear datos
 npm run db:generate      # genera la migración SQL en drizzle/ a partir de lib/schema.ts
 npm run db:migrate       # aplica las migraciones a la base de .env.local (producción)
 npm run db:seed          # carga los 4 proyectos iniciales (repetible)
